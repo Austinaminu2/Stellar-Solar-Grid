@@ -208,3 +208,37 @@ The balance is read from the contract unless `?balance=<stroops>` is given.
 
 `estimatedDaysRemaining` is `null` when there is no usage history or usage is
 not trending toward depletion.
+
+## Widget Summary (#901)
+
+### `GET /api/widgets/summary?meterId=<id>`
+
+A compact payload (under 1 KB) for the iOS and Android home-screen widgets. It is cached for 5 minutes and served with
+an `ETag`, so send `If-None-Match` to get a `304` when nothing has changed. See `docs/MOBILE_WIDGETS.md`.
+
+```json
+{
+  "meterId": "METER1",
+  "active": true,
+  "balanceXlm": 12.5,
+  "todayUnits": 3.2,
+  "last7DaysUnits": [4.1, 3.9, 5.0, 4.4, 3.8, 4.0, 3.2],
+  "daysRemaining": 3.1,
+  "updatedAt": "2026-09-27T10:00:00.000Z"
+}
+```
+
+## Monthly Bills (#902)
+
+Bills are generated on the 1st of each month, emailed as PDFs with a payment link, and kept as a permanent history.
+Endpoints live under `/api/billing`. See `docs/BILLING.md`.
+
+## Competitions (#903)
+
+Monthly efficiency, trading and green-energy competitions with live SSE leaderboards and automatic prize payouts.
+Endpoints live under `/api/competitions`. See `docs/COMPETITIONS.md`.
+
+## Smart Home (#904)
+
+Google Home and Alexa account linking (OAuth 2.0), device fulfillment, energy routines and privacy controls. Endpoints
+live under `/api/smart-home`. See `docs/SMART_HOME.md`.

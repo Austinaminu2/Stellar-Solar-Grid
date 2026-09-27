@@ -38,6 +38,25 @@ const MAX_REPLAY_LEDGERS = Number(process.env.MAX_REPLAY_LEDGERS ?? 1000);
 
 let mqttClient: mqtt.MqttClient | null = null;
 export function getMqttClient() { return mqttClient; }
+
+/**
+ * Issue #904: user-initiated relay control (voice assistants / energy
+ * routines). Publishes to the same control topic as contract-driven ON/OFF,
+ * tagged with its source so meter firmware and logs can tell them apart.
+ * Returns false when the MQTT bridge is not connected.
+ */
+export function sendRelayCommand(meterId: string, command: "ON" | "OFF", source: string): boolean {
+  if (!mqttClient?.connected) return false;
+  const topic = `solargrid/meters/${meterId}/control`;
+  logger.info({ event: "relay_command", meterId, command, topic, source }, "Sending user relay command");
+  mqttClient.publish(
+    topic,
+    JSON.stringify({ cmd: command, source, timestamp: new Date().toISOString() }),
+    { qos: 1 },
+    (err) => { if (err) logger.error({ meterId, err }, `Failed to publish ${command} command`); },
+  );
+  return true;
+}
 const FLUSH_INTERVAL_MS = Number(process.env.BRIDGE_FLUSH_INTERVAL_MS ?? process.env.BATCH_FLUSH_MS ?? 5_000);
 const EVENT_POLL_INTERVAL_MS = Number(
   process.env.EVENT_POLL_INTERVAL_MS ?? 5_000,

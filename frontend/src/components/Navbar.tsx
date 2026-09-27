@@ -21,6 +21,9 @@ export default function Navbar() {
     { href: "/pay", label: t("pay") },
     { href: "/dashboard/provider", label: t("provider") },
     { href: "/history", label: t("history") },
+    { href: "/bills", label: t("bills") },
+    { href: "/competitions", label: t("competitions") },
+    { href: "/smart-home", label: t("smartHome") },
   ];
 
   useEffect(() => {
